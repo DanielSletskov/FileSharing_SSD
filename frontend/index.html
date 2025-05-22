@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Secure File Storage</title>
+</head>
+<body>
+    <h1>Secure File Storage</h1>
+
+    <div id="auth">
+        <a href="http://localhost:5000/login/google">Login with Google</a> |
+        <a href="http://localhost:5000/logout">Logout</a>
+    </div>
+
+    <form id="uploadForm">
+        <input type="file" id="fileInput" />
+        <button type="submit">Upload</button>
+    </form>
+
+    <h2>Your Files</h2>
+    <ul id="fileList"></ul>
+
+    <script src="script.js"></script>
+</body>
+</html>
