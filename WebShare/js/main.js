@@ -1,12 +1,40 @@
 import {
-  login, listFiles, uploadFile, downloadFile, logout,
+  login, logout,
+  uploadFile, downloadFile,
   fetchTree, createFolder, renameItem, deleteItem
 } from './api.js';
 
+const loginView = document.getElementById('login-view');
+const dashView  = document.getElementById('dashboard-view');
+const loginForm = document.getElementById('login-form');
+const uploadForm = document.getElementById('upload-form');
 const fileTreeEl = document.getElementById('file-tree');
+const loginErr  = document.getElementById('login-error');
+const uploadStatus = document.getElementById('upload-status');
+const logoutBtn = document.getElementById('logout-btn');
 const newFolderBtn = document.getElementById('new-folder-btn');
 
-// Render the tree recursively
+function showDashboard() {
+  loginView.classList.add('hidden');
+  dashView.classList.remove('hidden');
+  refreshTree();
+}
+
+function showLogin() {
+  dashView.classList.add('hidden');
+  loginView.classList.remove('hidden');
+}
+
+async function refreshTree() {
+  fileTreeEl.innerHTML = '<li>Loading…</li>';
+  try {
+    const tree = await fetchTree();
+    renderTree(tree, fileTreeEl);
+  } catch (err) {
+    fileTreeEl.innerHTML = `<li class="error">${err.message}</li>`;
+  }
+}
+
 function renderTree(nodes, parentUl) {
   parentUl.innerHTML = '';
   for (const node of nodes) {
@@ -18,7 +46,6 @@ function renderTree(nodes, parentUl) {
     nameSpan.textContent = node.name;
     li.appendChild(nameSpan);
 
-    // Actions: rename & delete
     const actions = document.createElement('span');
     actions.classList.add('item-actions');
     const renameBtn = document.createElement('button');
@@ -28,24 +55,20 @@ function renderTree(nodes, parentUl) {
     actions.append(renameBtn, delBtn);
     li.appendChild(actions);
 
-    // File click = download
     if (node.type === 'file') {
       nameSpan.addEventListener('click', () => downloadFile(node.id));
     } else {
-      // Folder expand/collapse
       li.classList.add('folder');
       const childUl = document.createElement('ul');
       li.appendChild(childUl);
       nameSpan.addEventListener('click', () => {
         li.classList.toggle('open');
-        if (li.classList.contains('open') && childUl.children.length===0) {
-          // load children on first expand
+        if (li.classList.contains('open') && childUl.children.length === 0) {
           renderTree(node.children || [], childUl);
         }
       });
     }
 
-    // Rename handler
     renameBtn.addEventListener('click', async () => {
       const newName = prompt('New name for "' + node.name + '"', node.name);
       if (newName && newName !== node.name) {
@@ -54,7 +77,6 @@ function renderTree(nodes, parentUl) {
       }
     });
 
-    // Delete handler
     delBtn.addEventListener('click', async () => {
       if (confirm(`Delete "${node.name}"?`)) {
         await deleteItem(node.id);
@@ -66,18 +88,32 @@ function renderTree(nodes, parentUl) {
   }
 }
 
-// Fetch & render the entire tree
-async function refreshTree() {
-  fileTreeEl.innerHTML = '<li>Loading…</li>';
+loginForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  loginErr.textContent = '';
+  const user = document.getElementById('username').value;
+  const pass = document.getElementById('password').value;
   try {
-    const tree = await fetchTree();
-    renderTree(tree, fileTreeEl);
+    await login(user, pass);
+    showDashboard();
   } catch (err) {
-    fileTreeEl.innerHTML = `<li class="error">${err.message}</li>`;
+    loginErr.textContent = err.message;
   }
-}
+});
 
-// New‐folder flow (creates at root)
+uploadForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  uploadStatus.textContent = 'Uploading…';
+  const file = document.getElementById('file-input').files[0];
+  try {
+    await uploadFile(file);
+    uploadStatus.textContent = 'Upload successful!';
+    refreshTree();
+  } catch (err) {
+    uploadStatus.textContent = 'Error: ' + err.message;
+  }
+});
+
 newFolderBtn.addEventListener('click', async () => {
   const name = prompt('Folder name');
   if (name) {
@@ -86,26 +122,13 @@ newFolderBtn.addEventListener('click', async () => {
   }
 });
 
-// Hook into login/upload/logout as before, but replace refreshFiles() calls with refreshTree()
-loginForm.addEventListener('submit', /*…*/ async () => {
-  /* after successful login… */ showDashboard();
-});
-
-uploadForm.addEventListener('submit', /*…*/ async () => {
-  await uploadFile(file);
-  uploadStatus.textContent = 'Upload successful!';
-  refreshTree();
-});
-
 logoutBtn.addEventListener('click', () => {
   logout();
   showLogin();
 });
 
-// On load…
 if (localStorage.getItem('jwt')) {
   showDashboard();
-  refreshTree();
 } else {
   showLogin();
 }
