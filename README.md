@@ -1,3 +1,6 @@
+## README
+This file is the read from the repository: https://github.com/DanielSletskov/FileSharing_SSD  
+
 ## Project description  
 Changes  
 - Moved webpage to a github page for easy access  
