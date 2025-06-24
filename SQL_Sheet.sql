@@ -1,0 +1,6 @@
+CREATE TABLE [user] (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    github_id NVARCHAR(255) NOT NULL UNIQUE,
+    email NVARCHAR(255) NOT NULL,
+    role NVARCHAR(50) NOT NULL
+);

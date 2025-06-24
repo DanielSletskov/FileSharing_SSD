@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <link rel="stylesheet" href="style/style.css">
@@ -8,13 +7,20 @@
 <body>
     <h1>Secure File Storage</h1>
 
+    <!-- Traditional Login Form -->
+    <form id="loginForm" onsubmit="event.preventDefault(); loginUser();">
+        <input type="text" id="username" placeholder="Username/Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+        <button type="button" onclick="window.location.href='register'">Register</button>
+    </form>
+
+    <!-- GitHub Login -->
     <div id="auth">
-        <button class="block" onclick="login()">Login with Google</button>
+        <button class="block" id="loginBtn">Login with GitHub</button>
     </div>
 
-    <!-- Logout button: initially hidden -->
-    <a id="logoutBtn" class="redBlock hidden" href="http://localhost:5000/logout">Logout</a>
-
+    <!-- File Upload Form -->
     <form id="uploadForm">
         <input type="file" id="fileInput" />
         <button type="submit">Upload</button>
@@ -23,21 +29,28 @@
     <h2>Your Files</h2>
     <ul id="fileList"></ul>
 
-    <script>
-        // Simulated login check (replace with real logic)
-        const isLoggedIn = true; // Set to true if user is logged in
+    <!-- Logout link -->
+    <a id="logoutBtn" class="redBlock hidden" href="http://localhost:5000/logout">Logout</a>
 
-        window.onload = function () {
-            const logoutBtn = document.getElementById("logoutBtn");
-            if (isLoggedIn) {
-                logoutBtn.classList.remove("hidden");
-            }
-        };
+    <script>
+        function loginUser() {
+            // Stub: Implement your traditional login logic here
+            alert("Traditional login not implemented.");
+        }
 
         function login() {
-            // Redirect to login
-            window.location.href = "https://accounts.google.com/o/oauth2/v2/auth";
+            // GitHub OAuth login redirect
+            window.location.href = "http://localhost:5000/login/github";
         }
+
+        // Optional: show logout button if logged in
+        const isLoggedIn = true; // Replace with actual check
+        window.onload = function () {
+            if (isLoggedIn) {
+                document.getElementById("logoutBtn").classList.remove("hidden");
+            }
+        };
     </script>
+    <script src="script.js"></script>
 </body>
 </html>
