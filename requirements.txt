@@ -1,8 +1,10 @@
 Flask
+Flask-Dance
+Flask-Login
 Flask-Cors
 Flask-SQLAlchemy
 psycopg2-binary
 python-dotenv
 cryptography
-Flask-Dance
-Flask-Login
+gunicorn
+

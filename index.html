@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="style/style.css">
     <meta charset="UTF-8">
     <title>Secure File Storage</title>
 </head>
@@ -8,9 +9,11 @@
     <h1>Secure File Storage</h1>
 
     <div id="auth">
-        <a href="https://ff6c-85-218-218-10.ngrok-free.app/google">Login with Google</a> |
-        <a href="http://localhost:5000/logout">Logout</a> 
+        <button class="block" onclick="login()">Login with Google</button>
     </div>
+
+    <!-- Logout button: initially hidden -->
+    <a id="logoutBtn" class="redBlock hidden" href="http://localhost:5000/logout">Logout</a>
 
     <form id="uploadForm">
         <input type="file" id="fileInput" />
@@ -20,6 +23,21 @@
     <h2>Your Files</h2>
     <ul id="fileList"></ul>
 
-    <script src="script.js"></script>
+    <script>
+        // Simulated login check (replace with real logic)
+        const isLoggedIn = true; // Set to true if user is logged in
+
+        window.onload = function () {
+            const logoutBtn = document.getElementById("logoutBtn");
+            if (isLoggedIn) {
+                logoutBtn.classList.remove("hidden");
+            }
+        };
+
+        function login() {
+            // Redirect to login
+            window.location.href = "https://accounts.google.com/o/oauth2/v2/auth";
+        }
+    </script>
 </body>
 </html>
